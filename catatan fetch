@@ -1,0 +1,13 @@
+-componentdidmount adalah bagian dari life cycle yaitu comonen karena setelah dienter baru diambil. memastikan bahwa data component sudah diload semua
+
+- inverse/reverse/request proxy
+
+-npx create-react-app simple-fetching 
+npm i —save redux react-redux react-router-dom axios jquery bootstrap reactstrap 
+yg fontawesome optional, bebas klo mau install silakan.. 
+
+- diset isSubmiting ke false ketika submitnya komplit
+
+- diset isSubmitting ke true ketika submitnya belum komplit
+
+- isSubmiting berlaku di form
