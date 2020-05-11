@@ -11,13 +11,18 @@ export async function getSingleAlbum(id) {
 }
 
 export async function createAlbum(form, photo) {
-    const fd = new FormData()
-    let album = JSON.stringify(form)
-    fd.append('file', photo)
-    fd.append('photo', album)
-    const { data } = await client.post(`/albums`, fd)
-    console.log('PHOTO: ', data);
-    return data
+    const formData = new FormData();
+    let album = JSON.stringify(form);
+    formData.append('file', photo);
+    formData.append('photo', album);
+    console.log(formData.get('photo'));
+    const { data } = await client.post('/albums/img/upload', formData, {
+        headers: {
+            'Content-Type': `multipart/form-data`,
+        }
+    })
+    console.log(data);
+    return data;
 }
 
 export async function updateAlbum(album) {

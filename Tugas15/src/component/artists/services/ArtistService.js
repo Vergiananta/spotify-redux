@@ -1,36 +1,53 @@
-import client from "../../../shared/http-client/Client"
+import client from "../../../shared/http-client/Client";
 
-export async function getArtists() {
-    const { data } = await client.get('/albums')
+// export async function getGenres(){
+//     const { data: { data } } = await client.get('/genres');
+
+//     return data;
+// }
+
+export async function getArtist() {
+    const { data } = await client.get('/artists');
+
     return data;
 }
 
-export async function getSingleArtist(id) {
-    const { data } = await client.get(`/albums/${id}`);
+export async function getSingleArtist() {
+    const { data } = await client.get('/artists/${}');
+
     return data;
 }
+
+// export async function createArtist(artist){
+//     const { data: { data } } = await client.post('/artists', artist);
+
+//     return data;
+// }
 
 export async function createArtist(form, photo) {
-    const fd = new FormData()
-    let artist = JSON.stringify(form)
-    fd.append('file', photo)
-    fd.append('formData', artist)
-    const { data } = await client.post(`/artists`, fd, {
+    const formData = new FormData();
+    let artist = JSON.stringify(form);
+    formData.append('file', photo);
+    formData.append('photo', artist);
+    console.log(formData.get('photo'));
+    const { data } = await client.post('/artists/img/upload', formData, {
         headers: {
             'Content-Type': `multipart/form-data`,
         }
     })
     console.log(data);
-    return data
+    return data;
 }
 
 export async function updateArtist(artist) {
     const { data } = await client.put('/artists', artist);
+
     return data;
 }
 
-export async function deleteArtist(artist) {
-    const response = await client.delete(`/artists/${artist.id}`, artist);
-    if (response.status === 200) return true;
+export async function deleteArtist(artistId) {
+    const response = await client.delete(`/artists/${artistId}`);
+
+    if (response.status === 204) return true;
     else return false;
 }

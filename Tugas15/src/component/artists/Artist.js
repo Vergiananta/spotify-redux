@@ -1,27 +1,30 @@
-import React, { Component } from 'react';
-import { createStore } from 'redux';
-import { Provider } from 'react-redux';
-import { Row, Col } from 'reactstrap';
-import albumReducer from './reducers/AlbumReducer';
-import { Route } from 'react-router-dom';
-import ListAlbum from './component/ListAlbum';
-import AlbumForm from './component/AlbumForm';
+import React, { Component} from 'react';
+import { createStore } from "redux";
+import { Provider } from "react-redux";
+import { Row, Col } from "reactstrap";
+import { Route } from "react-router-dom";
+import artistReducer from "./reducers/ArtistReducer";
+import ListArtist from "./component/ListArtist";
+import ArtistsForm from "./component/ArtistForm";
+
+const artistStore = createStore(artistReducer);
+class Artist extends Component{
 
 
-const albumStore = createStore(albumReducer);
-class Album extends Component {
-    render() {
-        return (
-            <Provider store={albumStore}>
-                <Row>
-                    <Col>
-                        <Route exact path="/albums" render={() => <ListAlbum />} />
-                        <Route path="/albums/form" render={() => <AlbumForm />} />
-                    </Col>
-                </Row>
-            </Provider>
-        )
-    }
+
+render(){
+    
+    return(
+        <Provider store={artistStore}>
+            <Row>
+                <Col>
+                    <Route exact path="/artists" render={() => <ListArtist />} />
+                    <Route path="/artists/form" render={() => <ArtistsForm />} />
+                </Col>
+            </Row>
+        </Provider>
+    )
+}
 }
 
-export default Album;
+export default Artist;

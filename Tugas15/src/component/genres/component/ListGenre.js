@@ -42,8 +42,7 @@ class ListGenre extends Component {
         this.setState({ dialogOpen: false })
         Service.deleteGenre(target).then((isSuccess) => {
             if (isSuccess) this.loadData();
-        })
-
+        });
     }
 
     confirmDelete = (target) => {

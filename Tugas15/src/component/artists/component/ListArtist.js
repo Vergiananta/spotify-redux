@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import * as Service from '../services/ArtistService'
-import { FETCH_COMPLETE, SET_LOADING, EDIT_ARTIST } from '../reducers/Actions';
+import { FETCH_COMPLETE, SET_LOADING, EDIT_BUTTON } from '../reducers/Actions';
 import Modal from "reactstrap/lib/Modal";
 import ModalHeader from "reactstrap/lib/ModalHeader";
 import ModalBody from "reactstrap/lib/ModalBody";
@@ -25,7 +25,7 @@ class ListArtist extends Component {
     loadData() {
         const { fetchData, fetchComplete } = this.props;
         fetchData();
-        Service.getArtists()
+        Service.getArtist()
             .then((artists) => {
                 fetchComplete(artists);
             });
@@ -62,7 +62,7 @@ class ListArtist extends Component {
 
         fetchData();
 
-        Service.getArtists().then((artists) => {
+        Service.getArtist().then((artists) => {
             fetchComplete(artists);
         });
     }
@@ -146,7 +146,7 @@ function mapDispatchToProps(dispatch) {
     return {
         fetchData: () => dispatch({ type: SET_LOADING }),
         fetchComplete: (payload) => dispatch({ type: FETCH_COMPLETE, payload }),
-        handleEditButton: (payload) => dispatch({ type: EDIT_ARTIST, payload }),
+        handleEditButton: (payload) => dispatch({ type: EDIT_BUTTON, payload }),
     }
 }
 

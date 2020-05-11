@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { Switch, Route } from "react-router-dom";
 import Genre from "../genres/Genre";
 import Album from "../albums/Album";
+import Artist from "../artists/Artist";
 
 class Routes extends Component {
     render() {
@@ -13,7 +14,7 @@ class Routes extends Component {
                 </Route>
                 <Route path="/genres" render={() => <Genre />} />
                 <Route path="/albums" render={() => <Album />} />
-                <Route path="/artists" render={() => <p>Artists Page</p>} />
+                <Route path="/artists" render={() => <Artist />} />
                 <Route path="/songs" render={() => <p>songs Page</p>} />
             </Switch>
         )

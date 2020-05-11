@@ -14,35 +14,28 @@ class AlbumForm extends Component {
 
         this.state = {
             isSubmitting: false,
-            selectedImage: '',
+
         }
     }
 
-    handleImage = (event) => {
-        event.preventDefault();
-
-        this.setState({ selectedImage: event.target.files[0] })
+    submitArtistData = async () => {
+        const { form, image } = this.props;
+        return await createAlbum(form, image);
     }
 
-    submitAlbumData = async () => {
-        const { form } = this.props;
-        console.log('SUBMIT LOG: ', form);
-        return await Service.createAlbum(form, this.state.selectedImage);
-        // if (form.id) return await updateAlbum(form, this.state.selectedImage);
-        // else return await createAlbum(form, this.state.selectedImage)
-    }
+
+
+    //isSubmiting akan berubah menjadi false ketika submit sudah komplit
 
     handleSubmit = (event) => {
         event.preventDefault();
         const { setLoading, submitComplete, history } = this.props;
-        this.setState({ isSubmitting: true });
-
         setLoading();
-        this.submitAlbumData().then((data) => {
-            submitComplete(data);
-            this.setState({ isSubmitting: false });
-            history.replace('/albums');
-        });
+        this.submitArtistData()
+            .then((data) => {
+                submitComplete();
+                history.replace('/albums');
+            });
     }
 
     isValid = () => {
@@ -71,7 +64,7 @@ class AlbumForm extends Component {
                 <Card>
                     <CardHeader tag="form">Album Form</CardHeader>
                     <CardBody>
-                        <Form>
+                        <Form onSubmit={(event) => this.handleSubmit(event)}>
                             <FormGroup row>
                                 <Label for="title" sm="3">Album Name</Label>
                                 <Col sm="9">
@@ -103,8 +96,8 @@ class AlbumForm extends Component {
                             <FormGroup row>
                                 <Label for="image" sm="3">Image</Label>
                                 <Col sm="9">
-                                    {/* <CustomInput type="file" accept="image/png, image/jpeg, image/jpg" label={form.image} onChange={(event) => handleImageButton(event.target.files)} /> */}
-                                    <Input type="file" accept="image/png, image/jpeg, image/jpg" onChange={this.handleImage} />
+                                    <CustomInput type="file" accept="image/png, image/jpeg, image/jpg" label={form.image} onChange={(event) => handleImageButton(event.target.files)} />
+                                    {/* <Input type="file" accept="image/png, image/jpeg, image/jpg" onChange={this.handleImage} /> */}
                                 </Col>
                             </FormGroup>
                             <FormGroup row>

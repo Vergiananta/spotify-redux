@@ -1,45 +1,44 @@
-import React, { Component, Fragment } from 'react';
-import { Input, Card, Col, Label, Form, CardHeader, FormGroup, CardBody, CustomInput } from 'reactstrap';
-import { withRouter } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { Button } from 'reactstrap';
-import { createAlbum, updateAlbum } from '../services/ArtistService';
-import { SET_LOADING, INPUT_ARTIST, SUBMIT_ARTIST, IMAGE_ARTIST } from '../reducers/Actions';
-import * as Service from '../services/ArtistService'
+import React, { Component, Fragment } from "react";
+import { Form, FormGroup, Col, Label, Input, Button, CardBody, Card, CardHeader, CustomInput } from "reactstrap";
+import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+import { createArtist, updateArtist } from "../services/ArtistService";
+import { SET_LOADING, SUBMIT_COMPLETE, HANDLE_INPUT, HANDLE_IMAGE } from "../reducers/Actions";
 
 
-class AlbumForm extends Component {
+class ArtistForm extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             isSubmitting: false,
-            selectedImage: '',
+
         }
     }
 
     submitArtistData = async () => {
-        const { form } = this.props;
-        if (form.id) return await updateAlbum(form);
-        else return await createAlbum(form)
+        const { form, photo } = this.props;
+        return await createArtist(form, photo);
     }
+
+
+
+    //isSubmiting akan berubah menjadi false ketika submit sudah komplit
 
     handleSubmit = (event) => {
         event.preventDefault();
         const { setLoading, submitComplete, history } = this.props;
-        this.setState({ isSubmiting: true });
         setLoading();
-
-        this.submitArtistData().then((data) => {
-            submitComplete();
-            this.setState({ isSubmitting: false });
-            history.replace('/artists');
-        });
+        this.submitArtistData()
+            .then((data) => {
+                submitComplete(data);
+                history.replace('/artists');
+            });
     }
 
     isValid = () => {
         const { form, isLoading } = this.props;
-        const forms = form.title.length > 0 && form.description.length > 0 && form.releaseYear.length > 0 && form.discount.length > 0;
+        const forms = form.name.length > 0 && form.gender.length > 0 && form.biography.length > 0 && form.debutYear.length > 0 && form.photo.length > 0
         return forms || isLoading;
     }
 
@@ -51,68 +50,53 @@ class AlbumForm extends Component {
         return year;
     }
 
-    handleReturn = () => {
-        const { history } = this.props;
-        history.replace("/artists");
-    }
-
     render() {
-        const { form, isLoading, handleInputChanges, handleImage } = this.props;
+        const { form, isLoading, handleInputChange, handleImageUpload } = this.props;
         return (
             <Fragment>
                 <Card>
-                    <CardHeader tag="form">Artist Form</CardHeader>
+                    <CardHeader tag="form">Artists Form</CardHeader>
                     <CardBody>
-                        <Form>
+
+                        <Form onSubmit={(event) => this.handleSubmit(event)}>
                             <FormGroup row>
-                                <Label for="name" sm="3">Name</Label>
+                                <Label for="name" sm="3">Artists Name</Label>
                                 <Col sm="9">
-                                    <Input type="text" id="name" name="name" value={form.title} placeholder="Enter Album Name" onChange={(event) => handleInputChanges('title', event.target.value)} />
+                                    <Input type="text" id="name" name="name" value={form.name} placeholder="Artist Name" onChange={(event) => handleInputChange('name', event.target.value)} />
                                 </Col>
                             </FormGroup>
                             <FormGroup row>
-                                <Label for="title" sm="3">Album Name</Label>
+                                <Label for="gender" sm="3">Gender</Label>
                                 <Col sm="9">
-                                    <Input type="text" id="title" name="title" value={form.gender} placeholder="Enter Album Name" onChange={(event) => handleInputChanges('title', event.target.value)} />
+                                    <Input type="text" id="gender" name="gender" value={form.gender} placeholder="Gender" onChange={(event) => handleInputChange('gender', event.target.value)} />
                                 </Col>
                             </FormGroup>
                             <FormGroup row>
-                                <Label for="description" sm="3">Description</Label>
+                                <Label for="biography" sm="3">Biography</Label>
                                 <Col sm="9">
-                                    <Input type="text" id="description" name="description" value={form.biography} placeholder="Enter Album Description" onChange={(event) => handleInputChanges('description', event.target.value)} />
+                                    <Input type="textarea" id="biography" name="biography" value={form.biography} placeholder="Biography" onChange={(event) => handleInputChange('biography', event.target.value)} />
                                 </Col>
                             </FormGroup>
                             <FormGroup row>
-                                <Label for="releaseYear" sm="3">Release Year</Label>
+                                <Label for="debutYear" sm="3">Debut Year</Label>
                                 <Col sm="9">
-                                    <Input type="select" id="releaseYear" name="releaseYear" value={form.debutYear} onChange={(event) =>
-                                        handleInputChanges('releaseYear', event.target.value)}>
-                                        <option default >--select year--</option>
-                                        {this.optionYear(1950, 2020)}
+                                    <Input type="select" id="debutYear" name="debutYear" value={form.debutYear} onChange={(event) => handleInputChange('debutYear', event.target.value)}>
+                                        <option>Select Debut Year</option>
+                                        {this.optionYear(1990, 2020)}
                                     </Input>
                                 </Col>
                             </FormGroup>
                             <FormGroup row>
-                                <Label for="discount" sm="3">Discount</Label>
+                                <Label for="photo" sm="3">Artist Photo</Label>
                                 <Col sm="9">
-                                    <Input type="text" id="discount" name="discount" value={form.discount} placeholder="Enter Album Discount" onChange={(event) => handleInputChanges('discount', event.target.value)} />
+                                    <CustomInput type="file" label={form.photo} onChange={(event) => handleImageUpload(event.target.files)} />
                                 </Col>
                             </FormGroup>
-                            <FormGroup row>
-                                <Label for="image" sm="3">Image</Label>
-                                <Col sm="9">
-                                    <CustomInput type="file" accept="image/png, image/jpeg, image/jpg" label={form.image} onChange={(event) => handleImage(event.target.files)} />
-                                </Col>
-                            </FormGroup>
+
                             <FormGroup row>
                                 <Col sm={{ size: 9, offset: 3 }}>
                                     <Button type="submit" color="primary" disabled={!this.isValid()}>
-
-                                        {!isLoading ? 'Save Genre' : 'Submiting Data...'}
-                                    </Button>
-
-                                    <Button type="button" color="secondary" onClick={this.handleReturn}>
-                                        Return
+                                        {!isLoading ? 'Save Artist' : 'Submiting Data...'}
                                     </Button>
                                 </Col>
                             </FormGroup>
@@ -120,21 +104,23 @@ class AlbumForm extends Component {
                     </CardBody>
                 </Card>
             </Fragment>
-        )
+        );
     }
 }
 
 function mapStateToProps(state) {
     return { ...state };
+
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        handleInputChanges: (inputName, inputValue) => dispatch({ type: INPUT_ARTIST, payload: { inputName, inputValue } }),
+        handleInputChange: (inputName, inputValue) => dispatch({ type: HANDLE_INPUT, payload: { inputName, inputValue } }),
         setLoading: () => dispatch({ type: SET_LOADING }),
-        submitComplete: () => dispatch({ type: SUBMIT_ARTIST }),
-        handleImage: (payload) => dispatch({ type: IMAGE_ARTIST, payload }),
+        submitComplete: () => dispatch({ type: SUBMIT_COMPLETE }),
+        handleImageUpload: (payload) => dispatch({ type: HANDLE_IMAGE, payload }),
     }
+
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(AlbumForm));
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(ArtistForm));

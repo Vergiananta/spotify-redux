@@ -1,4 +1,4 @@
-import { IMAGE_ARTIST, SUBMIT_ARTIST, UPDATE_ARTIST, DELETE_ARTIST, EDIT_ARTIST, RESET_ARTIST, SET_LOADING, INPUT_ARTIST, FETCH_COMPLETE, SEARCH_ARTIST } from "./Actions";
+import { DELETE_ARTIST, EDIT_BUTTON, RESET_FORM, SET_LOADING, FETCH_COMPLETE, HANDLE_INPUT, SUBMIT_COMPLETE, HANDLE_IMAGE } from "./Actions";
 
 const defaultFormValues = {
     id: undefined,
@@ -6,56 +6,53 @@ const defaultFormValues = {
     debutYear: '',
     gender: '',
     biography: '',
-    photo: null,
-
+    photo: undefined,
 };
 
 const initialState = {
     isLoading: true,
     artists: [],
+    form: { ...defaultFormValues },
     photo: '',
-    form: { ...defaultFormValues }
 }
+
 
 function artistReducer(state = initialState, action) {
     const { type, payload } = action;
 
     switch (type) {
+        
+            
+            case DELETE_ARTIST:
+                return { ...state, albums: state.artists.filter((artist) => ( artist.id !== payload))  };
+                       
+                    case EDIT_BUTTON:
+                    const artist = state.artists.find((artist)=> artist.id===payload);
+                    return{ ...state, form: { ...artist}};
+                    
+                        
+                        case RESET_FORM:
+                            return { ...state, form: { ...defaultFormValues } };
 
-        case DELETE_ARTIST:
-            return { ...state, artists: state.genres.filter((artist) => (artist.id !== payload)) };
+                            case SET_LOADING:
+                                return { ...state, isLoading: true};
 
-        case UPDATE_ARTIST:
-            return { ...state, artists: state.genres.map((artist) => artist.id === payload.id ? payload : artist) };
+                                case FETCH_COMPLETE:
+                                    return { ...state, isLoading: false, artists: [ ...payload]};
+                                    
+                                    case HANDLE_INPUT: 
+                                    const { form }= state;
+                                    const { inputName, inputValue} = payload;
 
-        case EDIT_ARTIST:
-            const album = state.artists.find((artist) => artist.id === payload);
-            return { ...state, form: { ...artist } };
+                                    form[inputName] = inputValue;
 
+                                    return {...state, form: { ...form }};
 
-        case RESET_ARTIST:
-            return { ...state, form: { ...defaultFormValues } }
+                                    case SUBMIT_COMPLETE:
+                                        return { ...state, isLoading: false, form: { ...defaultFormValues }};
 
-        case SET_LOADING:
-            return { ...state, isLoading: true }
-
-        case FETCH_COMPLETE:
-            return { ...state, isLoading: false, artists: [...payload] }
-
-        case SEARCH_ARTIST:
-            return { ...state, keyword: payload };
-
-        case INPUT_ARTIST:
-            const { inputName, inputValue } = payload;
-            const form = { ...state.form };
-            form[inputName] = inputValue;
-            return { ...state, form: { ...form } };
-
-        case SUBMIT_ARTIST:
-            return { ...state, isLoading: false, form: { ...defaultFormValues } };
-
-        case IMAGE_ARTIST:
-            return { ...state, photo: payload[0] }
+                                            case HANDLE_IMAGE:
+                                                return { ...state, photo: payload[0] };
         default:
             return { ...state }
     }
