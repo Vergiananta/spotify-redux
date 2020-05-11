@@ -6,14 +6,14 @@ import client from "../../../shared/http-client/Client";
 //     return data;
 // }
 
-export async function getArtist() {
+export async function getArtist(){
     const { data } = await client.get('/artists');
 
     return data;
 }
 
-export async function getSingleArtist() {
-    const { data } = await client.get('/artists/${}');
+export async function getSingleArtist(){
+    const { data: { data } } = await client.get('/artists/${}');
 
     return data;
 }
@@ -24,14 +24,14 @@ export async function getSingleArtist() {
 //     return data;
 // }
 
-export async function createArtist(form, photo) {
+export async function createArtist(form, photo){
     const formData = new FormData();
     let artist = JSON.stringify(form);
     formData.append('file', photo);
     formData.append('photo', artist);
     console.log(formData.get('photo'));
-    const { data } = await client.post('/artists/img/upload', formData, {
-        headers: {
+    const {data} = await client.post('/artists/img/upload', formData,{
+        headers:{
             'Content-Type': `multipart/form-data`,
         }
     })
@@ -39,15 +39,15 @@ export async function createArtist(form, photo) {
     return data;
 }
 
-export async function updateArtist(artist) {
-    const { data } = await client.put('/artists', artist);
+export async function updateArtist(artist){
+    const { data: { data } } = await client.put('/artists', artist);
 
     return data;
 }
 
-export async function deleteArtist(artistId) {
+export async function deleteArtist(artistId){
     const response = await client.delete(`/artists/${artistId}`);
 
-    if (response.status === 204) return true;
+    if(response.status === 204) return true;
     else return false;
 }
